@@ -176,6 +176,56 @@ footer .credit{margin-top:10px;font-size:12px;color:#9c8c6a}
 .askbox .btns{display:flex;flex-wrap:wrap;gap:10px}
 .disclaimer{margin-top:18px;font-size:13px;color:var(--ink-soft);padding-left:14px;border-left:2px solid var(--red)}
 
+/* главная: бизнес */
+.hero .note a{color:var(--red);font-weight:700;text-decoration:none;border-bottom:1px solid currentColor}
+.gloss{display:grid;gap:14px;grid-template-columns:1fr}
+@media(min-width:640px){.gloss{grid-template-columns:1fr 1fr}}
+@media(min-width:1000px){.gloss{grid-template-columns:repeat(5,1fr)}}
+.term{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:24px 22px}
+.term .abbr{display:inline-flex;align-items:center;justify-content:center;min-width:52px;height:52px;padding:0 10px;border-radius:14px;background:var(--cream);border:1px solid var(--gold-soft);font:600 24px/1 "Cormorant Garamond",serif;color:var(--red)}
+.term h3{font-size:23px;margin:16px 0 6px}
+.term p{font-size:14.5px;color:var(--ink-soft)}
+.plan{background:var(--paper);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.plan-grid{display:grid;gap:32px;align-items:center}
+@media(min-width:900px){.plan-grid{grid-template-columns:1fr 1.1fr;gap:48px}}
+.semerka{background:#fff;border:1px solid var(--line);border-radius:28px;padding:26px 22px 22px;box-shadow:var(--shadow)}
+.semerka svg{width:100%;height:auto;display:block}
+.semerka figcaption{margin-top:14px;font-size:14.5px;color:var(--ink-soft)}
+table{border-collapse:collapse;width:100%}
+.stages caption{caption-side:top;text-align:left;font:600 24px/1.2 "Cormorant Garamond",serif;margin-bottom:14px}
+.stages th,.entries th{font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--gold-deep);text-align:left;padding:10px 12px;border-bottom:1.5px solid var(--gold)}
+.stages td,.entries td{padding:13px 12px;border-bottom:1px solid var(--line);font-size:16px;vertical-align:top}
+.stages td:nth-child(n+2),.stages th:nth-child(n+2){text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+@media(max-width:480px){.stages td,.stages th{padding:12px 8px}.stages th{letter-spacing:.06em}}
+.stages tfoot td{font-weight:700;color:var(--red);border-bottom:none;background:var(--red-soft)}
+.stages tfoot td:first-child{border-radius:12px 0 0 12px}
+.stages tfoot td:last-child{border-radius:0 12px 12px 0}
+.small-note{margin-top:16px;font-size:13.5px;color:var(--ink-soft);padding-left:14px;border-left:2px solid var(--gold)}
+.table-scroll{overflow-x:auto;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:8px 10px}
+.entries{min-width:560px}
+.entries tr:last-child td{border-bottom:none}
+.entries td b{font-family:"Cormorant Garamond",serif;font-size:21px;font-weight:600}
+@media(max-width:640px){
+  .table-scroll{overflow:visible;background:none;border:none;padding:0}
+  .entries{min-width:0}
+  .entries thead{display:none}
+  .entries,.entries tbody,.entries tr,.entries td{display:block}
+  .entries tr{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px;margin-bottom:10px}
+  .entries td{border:none;padding:2px 0;font-size:15px}
+  .entries td:first-child{margin-bottom:4px}
+  .entries td:nth-child(2)::before{content:"На старте: ";color:var(--gold-deep);font-weight:700}
+  .entries td:nth-child(3){color:var(--ink-soft)}
+}
+.terms{display:grid;gap:14px;grid-template-columns:1fr}
+@media(min-width:800px){.terms{grid-template-columns:1fr 1fr}}
+.cond{padding:24px 24px 24px 26px;border-radius:var(--radius);background:var(--paper);border:1px solid var(--line);border-left:4px solid var(--green)}
+.cond h3{font-size:24px;margin-bottom:6px}
+.cond p{font-size:15px;color:var(--ink-soft)}
+.teaser{display:grid;gap:32px;align-items:center}
+@media(min-width:900px){.teaser{grid-template-columns:.8fr 1.2fr;gap:56px}}
+.teaser .img{background:#fff;border:1px solid var(--line);border-radius:28px;padding:26px;max-width:340px;width:100%;justify-self:center;box-shadow:var(--shadow)}
+footer a{color:#f3e6c8}
+
 /* появление при прокрутке, спокойно */
 .rise{opacity:0;transform:translateY(18px);transition:opacity .8s ease,transform .8s cubic-bezier(.2,.8,.2,1)}
 .rise.in{opacity:1;transform:none}
