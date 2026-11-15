@@ -301,3 +301,18 @@ footer a{color:#f3e6c8}
 .oath-text p+p{margin-top:14px}
 .oath-text footer{all:unset;display:block;margin-top:20px;font:700 13px/1.4 "Manrope",sans-serif;letter-spacing:.12em;text-transform:uppercase;color:var(--gold-deep)}
 @media(max-width:480px){.oath-text{padding:24px 20px}}
+
+/* каталог: приборы и о компании */
+@media(min-width:1000px){.grid.grid-3{grid-template-columns:repeat(3,1fr)}}
+.about{background:var(--paper);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.about-grid{display:grid;gap:18px;grid-template-columns:1fr}
+@media(min-width:800px){.about-grid{grid-template-columns:repeat(3,1fr)}}
+.about-card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;display:flex;flex-direction:column}
+.about-card img{width:100%;aspect-ratio:4/3;object-fit:cover}
+.about-card figcaption{padding:20px 22px 24px}
+.about-card h3{font-size:25px;margin-bottom:8px}
+.about-card p{font-size:14.5px;color:var(--ink-soft)}
+.certs{margin-top:28px;padding:26px 24px;border-radius:var(--radius);background:var(--cream);border:1px solid var(--line)}
+.certs h3{font-size:26px;margin-bottom:14px}
+.certs ul{list-style:none;display:flex;flex-wrap:wrap;gap:8px}
+.certs li{background:#fff;border:1px solid var(--gold-soft);padding:7px 14px;border-radius:999px;font-size:14.5px;font-weight:600}
