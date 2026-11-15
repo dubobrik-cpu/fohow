@@ -284,3 +284,13 @@ footer a{color:#f3e6c8}
 .rise{opacity:0;transform:translateY(18px);transition:opacity .8s ease,transform .8s cubic-bezier(.2,.8,.2,1)}
 .rise.in{opacity:1;transform:none}
 @media (prefers-reduced-motion:reduce){.rise{opacity:1;transform:none;transition:none}.dir,.card,.btn{transition:none}}
+
+/* ценности: Мечта Феникс */
+.values{background:var(--ink);color:#f3e6c8;padding:80px 0}
+.values-card{max-width:820px;margin:0 auto;text-align:center}
+.values .eyebrow{color:var(--gold)}
+.values h2{color:#fff6e2;margin:12px 0 22px}
+.values-lead{font-size:18px;line-height:1.7;color:#e9dcc0}
+.values blockquote{margin:30px auto 0;max-width:700px;padding:26px 24px;border-top:1px solid rgba(201,160,99,.45);border-bottom:1px solid rgba(201,160,99,.45);font:italic 600 clamp(22px,2.6vw,28px)/1.35 "Cormorant Garamond",Georgia,serif;color:#fff6e2}
+.values-src{margin-top:14px;font-size:13px;letter-spacing:.06em;color:#bfae88}
+.oath-video video{display:block;width:100%;height:auto;aspect-ratio:16/9;background:#000;object-fit:contain}
