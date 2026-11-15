@@ -294,3 +294,10 @@ footer a{color:#f3e6c8}
 .values blockquote{margin:30px auto 0;max-width:700px;padding:26px 24px;border-top:1px solid rgba(201,160,99,.45);border-bottom:1px solid rgba(201,160,99,.45);font:italic 600 clamp(22px,2.6vw,28px)/1.35 "Cormorant Garamond",Georgia,serif;color:#fff6e2}
 .values-src{margin-top:14px;font-size:13px;letter-spacing:.06em;color:#bfae88}
 .oath-video video{display:block;width:100%;height:auto;aspect-ratio:16/9;background:#000;object-fit:contain}
+.oath-sense{font:italic 600 clamp(21px,2.2vw,25px)/1.35 "Cormorant Garamond",Georgia,serif;color:var(--ink)}
+.oath-sense+p a{color:var(--red);font-weight:700}
+.oath-text{margin:44px auto 0;max-width:860px;padding:34px 30px;background:var(--paper);border:1px solid var(--line);border-left:4px solid var(--gold);border-radius:var(--radius);box-shadow:var(--shadow)}
+.oath-text p{font:500 clamp(19px,2vw,22px)/1.5 "Cormorant Garamond",Georgia,serif;color:var(--ink)}
+.oath-text p+p{margin-top:14px}
+.oath-text footer{all:unset;display:block;margin-top:20px;font:700 13px/1.4 "Manrope",sans-serif;letter-spacing:.12em;text-transform:uppercase;color:var(--gold-deep)}
+@media(max-width:480px){.oath-text{padding:24px 20px}}
