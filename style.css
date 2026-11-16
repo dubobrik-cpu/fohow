@@ -330,3 +330,6 @@ footer a{color:#f3e6c8}
 .series li::marker{color:var(--gold-deep);font-weight:700}
 .series .ask{display:inline-flex;gap:8px;margin-top:16px;font-weight:700;font-size:14.5px;color:var(--red);text-decoration:none}
 .bad-warn{margin:0 0 16px;padding:14px 18px;border-radius:12px;background:var(--red-soft);border:1.5px solid var(--red);color:var(--ink);font-weight:700;font-size:clamp(16px,1.8vw,19px);text-align:center}
+
+/* yan-shen.html: шаги по три */
+@media(min-width:800px){.steps.steps-3{grid-template-columns:repeat(3,1fr)}}
