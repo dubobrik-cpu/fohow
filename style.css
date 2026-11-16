@@ -333,3 +333,63 @@ footer a{color:#f3e6c8}
 
 /* yan-shen.html: шаги по три */
 @media(min-width:800px){.steps.steps-3{grid-template-columns:repeat(3,1fr)}}
+
+/* блог */
+.blog-hero{padding:72px 0 40px;background:var(--cream);border-bottom:1px solid var(--line)}
+.blog-hero h1{margin:12px 0 14px;font-size:clamp(40px,6vw,64px)}
+.blog-hero h1 em{color:var(--red)}
+.blog-hero .lead{color:var(--ink-soft);max-width:560px}
+.blog-list{padding:56px 0 24px}
+.feed{max-width:720px;margin:0 auto;display:grid;gap:22px}
+.feed-note{max-width:720px;margin:26px auto 0}
+.post{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:28px 30px;box-shadow:var(--shadow);overflow:hidden;overflow-wrap:anywhere}
+.post h2{font-size:clamp(28px,3.4vw,34px);margin:10px 0 4px}
+.post-text{color:var(--ink-soft)}
+.post-text p,.post-text ul{margin-top:12px}
+.post-text ul{list-style:none;padding:0}
+.post-text li{position:relative;padding-left:20px;margin-top:6px}
+.post-text li::before{content:"";position:absolute;left:2px;top:.68em;width:7px;height:7px;border-radius:50%;background:var(--gold)}
+.post-pic{margin:22px -30px -28px;border-top:1px solid var(--line)}
+.post-pic img{width:100%;max-height:560px;object-fit:cover}
+.post-pic figcaption{font-size:12px;color:var(--ink-soft);padding:8px 30px 12px}
+.pusto{opacity:.55;font-style:italic}
+@media(max-width:600px){.post{padding:22px 20px}.post-pic{margin:20px -20px -22px}.post-pic figcaption{padding:8px 20px 12px}}
+
+/* страница «Написать в блог» */
+.btn-sm{min-height:40px;padding:0 18px;font-size:14px}
+.pisat-main{padding:44px 0 80px}
+.pisat-grid{display:grid;gap:36px;align-items:start}
+@media(min-width:960px){.pisat-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}
+.pisat-form h1{font-size:clamp(34px,4.4vw,46px);margin:8px 0 22px}
+.fld{display:block;margin-bottom:18px}
+.fld>span{display:block;font-weight:700;font-size:15px;margin-bottom:7px}
+.fld>span i{font-style:normal;font-weight:500;color:var(--ink-soft);font-size:13px;margin-left:6px}
+.fld small{display:block;margin-top:6px;font-size:13px;color:var(--ink-soft);line-height:1.45}
+.fld input[type=text],.fld input[type=password],.fld textarea{width:100%;font:500 16px/1.5 "Manrope",sans-serif;color:var(--ink);background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;outline:none;transition:border-color .2s}
+.fld input:focus,.fld textarea:focus{border-color:var(--gold)}
+.fld textarea{resize:vertical;min-height:180px}
+.foto-btn{display:inline-flex;align-items:center;min-height:46px;padding:0 18px;border:1.5px dashed var(--gold);border-radius:12px;background:#fff;cursor:pointer;max-width:100%}
+.foto-btn input{position:absolute;width:1px;height:1px;opacity:0}
+.foto-btn b{font-weight:600;font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.link-btn{background:none;border:0;color:var(--red);font:600 14px "Manrope",sans-serif;cursor:pointer;padding:6px 0;text-decoration:underline}
+#foto-del{margin-left:14px}
+.proverka{margin:6px 0 20px;display:grid;gap:10px;font-size:14.5px;line-height:1.5}
+.proverka>div{border-radius:12px;padding:12px 14px;background:var(--cream)}
+.pr-ok.good{background:var(--green-soft);color:var(--green);font-weight:600}
+.pr-red{background:var(--red-soft)!important;color:#7a2418}
+.pr-yel{background:#f8efd9!important;color:#6d5320}
+mark.mr{background:#e9b9ad;color:#5a1208;border-radius:4px;padding:0 4px}
+mark.my{background:#f0dca8;color:#5a4410;border-radius:4px;padding:0 4px}
+.btn-wide{width:100%}
+.btn:disabled{opacity:.45;cursor:not-allowed;box-shadow:none}
+.otvet{margin-top:14px;font-size:14.5px;line-height:1.5}
+.otvet.info{color:var(--ink-soft)}
+.otvet.err{color:var(--red);font-weight:600}
+.pisat-side .eyebrow{margin-bottom:12px}
+.feed-preview{max-width:none}
+.moi{margin-top:34px}
+.moi ul{list-style:none;padding:0;border-top:1px solid var(--line)}
+.moi li{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--line);font-size:15px}
+.moi li span{min-width:0;overflow-wrap:anywhere}
+.moi li small{display:block;font-size:12.5px;color:var(--ink-soft)}
+@media(max-width:480px){.pisat .brand small{display:none}.pisat .brand span{font-size:19px}}

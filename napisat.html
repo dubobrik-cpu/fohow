@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Новая запись в блог · Fohow</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="pisat">
+
+<div class="concept">Пробный режим: так будет выглядеть страница для ваших записей. Публикация заработает, когда сайт переедет на ваш хостинг</div>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="blog.html">
+      <img src="assets/logo-fohow.png" alt="Fohow" width="90" height="30">
+      <span>Ян Шен<small>новая запись в блог</small></span>
+    </a>
+    <a class="btn btn-line btn-sm" href="blog.html">Открыть блог</a>
+  </div>
+</header>
+
+<section class="pisat-main">
+  <div class="wrap pisat-grid">
+    <form class="pisat-form" id="forma" autocomplete="off" novalidate>
+      <div class="eyebrow">Новая запись</div>
+      <h1>Написать в блог</h1>
+
+      <label class="fld">
+        <span>Пароль</span>
+        <input type="password" id="parol" autocomplete="current-password" placeholder="Пароль от блога">
+      </label>
+
+      <label class="fld">
+        <span>Заголовок <i>необязательно</i></span>
+        <input type="text" id="zag" maxlength="120" placeholder="Например: Мысль дня">
+      </label>
+
+      <label class="fld">
+        <span>Текст</span>
+        <textarea id="tekst" rows="9" maxlength="5000" placeholder="Ваша мысль"></textarea>
+        <small>Пустая строка начинает новый абзац. Строка, которая начинается с «- », станет пунктом списка</small>
+      </label>
+
+      <div class="fld">
+        <span>Фото <i>необязательно</i></span>
+        <label class="foto-btn" id="foto-btn">
+          <input type="file" id="foto" accept="image/*">
+          <b id="foto-name">Выбрать фото</b>
+        </label>
+        <button type="button" class="link-btn" id="foto-del" hidden>Убрать фото</button>
+      </div>
+
+      <div class="proverka" id="proverka" aria-live="polite">
+        <div class="pr-ok" id="pr-ok">Напишите текст, и я проверю его перед публикацией</div>
+        <div class="pr-red" id="pr-red" hidden></div>
+        <div class="pr-yel" id="pr-yel" hidden></div>
+      </div>
+
+      <button type="submit" class="btn btn-red btn-wide" id="opublikovat" disabled>Опубликовать</button>
+      <p class="otvet" id="otvet" role="status"></p>
+    </form>
+
+    <div class="pisat-side">
+      <div class="eyebrow">Так запись будет выглядеть на сайте</div>
+      <div class="feed feed-preview" id="predprosmotr"></div>
+
+      <div class="moi">
+        <div class="eyebrow">Мои записи</div>
+        <ul id="spisok"></ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script id="posts-data" type="application/json">[{"id": "2026-11-16-put", "date": null, "label": "Из моего канала", "title": "Здоровье: путь, а не цель", "text": "Здоровье не результат одного правильного действия, а сумма ежедневных выборов.\n\nЭту идею Fohow несёт через свою миссию: сделать культуру здоровья доступной каждому человеку, независимо от страны и возраста. Не просто продавать продукты, а распространять образ жизни, в котором здоровье становится естественным следствием гармонии.\n\nЗдоровье не цель. Это путь.", "img": null, "alt": null, "credit": null}, {"id": "2026-11-16-printsipy", "date": null, "label": "Из моего канала", "title": "Что нужно человеку: краткий ответ ТКМ", "text": "Если свести всё к простым принципам:\n- Движение без истощения\n- Еда как поддержка, а не как удовольствие или привычка\n- Эмоциональный баланс\n- Следование ритмам природы\n- Постоянство, а не героические усилия", "img": null, "alt": null, "credit": null}, {"id": "2026-11-16-huangshan", "date": null, "label": "Из моего канала", "title": "Горы Хуаншань", "text": "Окутанные облаками горы Хуаншань в провинции Аньхой.\n\nРаньше их называли Ишань, «Иссиня-чёрные горы». Нынешнее имя, Жёлтые горы, они получили в 747 году в честь легендарного Жёлтого императора Хуан-ди. По преданию, именно здесь он создавал эликсир бессмертия.", "img": "assets/gory-huangshan-900.webp", "alt": "Горы Хуаншань в облаках", "credit": "Фото: eviltomthai, лицензия CC BY 2.0"}]</script>
+<script id="stop-data" type="application/json">{"red": ["вылеч", "излеч", "лечит", "лечат", "лечени", "лечеб", "лечу", "лечим", "лечил", "лекарств", "исцел", "болезн", "заболе", "недуг", "диагноз", "онколог", "=рак", "раков", "опухол", "диабет", "астм", "инсульт", "инфаркт", "гипертон", "covid", "ковид", "коронавирус", "эпидеми", "пандеми", "гарантир", "панаце", "чудодейств", "избавит", "избавля", "избавил"], "yellow": ["иммунитет", "=боль", "=боли", "=болит", "=болят", "сустав", "давлени", "вирус", "препарат", "симптом", "омолож", "похуд", "сжига", "токсин", "шлак", "100%"]}</script>
+<script>
+(function(){
+  var PROBA = true; // пробный режим: обработчика публикации пока нет, он появится на хостинге
+  var posts = JSON.parse(document.getElementById('posts-data').textContent || '[]');
+  var stop = JSON.parse(document.getElementById('stop-data').textContent || '{}');
+  var $ = function(id){ return document.getElementById(id); };
+  var fotoUrl = null;
+
+  function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+  var MES = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+  function dataRu(iso){ var d = new Date(iso); return d.getDate() + ' ' + MES[d.getMonth()] + ' ' + d.getFullYear(); }
+
+  // тот же разбор текста, что и на странице блога
+  function textHtml(t){
+    return t.replace(/\r/g,'').split(/\n\s*\n/).map(function(block){
+      var out = '', para = [], list = [];
+      block.split('\n').forEach(function(line){
+        line = line.trim(); if(!line) return;
+        if(/^[-•]\s+/.test(line)){
+          if(para.length){ out += '<p>' + para.join('<br>') + '</p>'; para = []; }
+          list.push('<li>' + esc(line.replace(/^[-•]\s+/, '')) + '</li>');
+        } else {
+          if(list.length){ out += '<ul>' + list.join('') + '</ul>'; list = []; }
+          para.push(esc(line));
+        }
+      });
+      if(para.length) out += '<p>' + para.join('<br>') + '</p>';
+      if(list.length) out += '<ul>' + list.join('') + '</ul>';
+      return out;
+    }).join('');
+  }
+
+  // поиск слов из списка: начало слова, «=» значит целое слово
+  function nayti(text, spisok){
+    var low = text.toLowerCase().replace(/ё/g,'е'), found = [];
+    (spisok || []).forEach(function(w){
+      var whole = w.charAt(0) === '=', stem = (whole ? w.slice(1) : w).replace(/ё/g,'е');
+      var re = new RegExp('(^|[^а-яa-z0-9])(' + stem.replace(/[.*+?^${}()|[\]\\%]/g,'\\$&') + (whole ? ')(?![а-яa-z0-9])' : '[а-яa-z0-9]*)'), 'gi');
+      var m; while((m = re.exec(low))){ var word = text.substr(m.index + m[1].length, m[2].length); if(found.indexOf(word) < 0) found.push(word); }
+    });
+    return found;
+  }
+
+  function obnovit(){
+    var zag = $('zag').value.trim(), t = $('tekst').value.trim();
+    var vse = zag + '\n' + t;
+    var red = nayti(vse, stop.red), yel = nayti(vse, stop.yellow);
+    $('pr-ok').hidden = !!(red.length || yel.length) && !!t;
+    $('pr-ok').textContent = t ? 'Проверено: слов про лечение нет' : 'Напишите текст, и я проверю его перед публикацией';
+    $('pr-ok').className = t ? 'pr-ok good' : 'pr-ok';
+    $('pr-red').hidden = !red.length;
+    $('pr-red').innerHTML = '<b>Так писать нельзя:</b> ' + red.map(function(w){ return '<mark class="mr">' + esc(w) + '</mark>'; }).join(' ') + '<br>Для сайта с БАД закон о рекламе запрещает обещать лечение. Перепишите эти места, например «мне помогает чувствовать себя бодрее» вместо «лечит»';
+    $('pr-yel').hidden = !yel.length;
+    $('pr-yel').innerHTML = '<b>Проверьте:</b> ' + yel.map(function(w){ return '<mark class="my">' + esc(w) + '</mark>'; }).join(' ') + '<br>Опубликовать можно, но убедитесь, что здесь нет обещания результата';
+    $('opublikovat').disabled = !t || red.length > 0;
+
+    var html = '<article class="post"><div class="post-meta eyebrow">' + dataRu(new Date()) + '</div>' +
+      (zag ? '<h2>' + esc(zag) + '</h2>' : '') +
+      '<div class="post-text">' + (t ? textHtml(t) : '<p class="pusto">Здесь появится ваш текст</p>') + '</div>' +
+      (fotoUrl ? '<figure class="post-pic"><img src="' + fotoUrl + '" alt=""></figure>' : '') + '</article>';
+    $('predprosmotr').innerHTML = html;
+  }
+
+  function spisok(){
+    $('spisok').innerHTML = posts.map(function(p){
+      return '<li><span>' + esc(p.title || p.text.slice(0, 60)) + '<small>' + (p.date ? dataRu(p.date) : esc(p.label || '')) + '</small></span><button type="button" class="link-btn" data-id="' + esc(p.id) + '">Удалить</button></li>';
+    }).join('') || '<li><span>Записей пока нет</span></li>';
+  }
+
+  $('zag').addEventListener('input', obnovit);
+  $('tekst').addEventListener('input', obnovit);
+  $('foto').addEventListener('change', function(){
+    var f = this.files && this.files[0]; if(!f) return;
+    if(fotoUrl) URL.revokeObjectURL(fotoUrl);
+    fotoUrl = URL.createObjectURL(f);
+    $('foto-name').textContent = f.name; $('foto-del').hidden = false; obnovit();
+  });
+  $('foto-del').addEventListener('click', function(){
+    if(fotoUrl) URL.revokeObjectURL(fotoUrl); fotoUrl = null; $('foto').value = '';
+    $('foto-name').textContent = 'Выбрать фото'; this.hidden = true; obnovit();
+  });
+  $('spisok').addEventListener('click', function(e){
+    var b = e.target.closest('button[data-id]'); if(!b) return;
+    $('otvet').className = 'otvet info';
+    $('otvet').textContent = PROBA ? 'Пробный режим: удаление заработает на вашем хостинге' : '';
+  });
+  $('forma').addEventListener('submit', function(e){
+    e.preventDefault();
+    if($('opublikovat').disabled) return;
+    if(!$('parol').value){ $('otvet').className = 'otvet err'; $('otvet').textContent = 'Введите пароль'; $('parol').focus(); return; }
+    $('otvet').className = 'otvet info';
+    $('otvet').textContent = PROBA ? 'Пробный режим: запись не сохранилась. Когда сайт переедет на ваш хостинг, после этой кнопки запись появится в блоге через минуту' : '';
+  });
+
+  spisok(); obnovit();
+})();
+</script>
+</body>
+</html>
