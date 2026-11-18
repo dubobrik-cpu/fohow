@@ -386,6 +386,16 @@ mark.my{background:#f0dca8;color:#5a4410;border-radius:4px;padding:0 4px}
 .otvet.info{color:var(--ink-soft)}
 .otvet.err{color:var(--red);font-weight:600}
 .otvet.good{color:#2f6b3a;font-weight:600}
+/* сертификат на приборы (katalog.html#sertifikat) */
+.cert-doc{margin-top:28px;display:grid;gap:24px;padding:24px;background:#fff;border:1px solid var(--line);border-radius:var(--radius);align-items:start}
+@media(min-width:760px){.cert-doc{grid-template-columns:240px minmax(0,1fr);gap:32px;padding:28px}}
+.cert-pic{display:block;max-width:240px;border:1px solid var(--line);border-radius:8px;overflow:hidden;box-shadow:0 6px 18px rgba(86,0,31,.08)}
+.cert-pic img{width:100%;height:auto;display:block}
+.cert-doc h3{font-family:'Manrope',sans-serif;font-size:20px;font-weight:700;margin:8px 0 12px;overflow-wrap:anywhere}
+.cert-doc ul{list-style:none;display:grid;gap:8px;margin-bottom:14px}
+.cert-doc li{font-size:14.5px;color:var(--ink-soft);line-height:1.5}
+.cert-doc li b{color:var(--ink)}
+.certs li a{color:inherit;text-decoration:underline;text-decoration-color:var(--gold)}
 .otvet a{color:inherit}
 .pisat-side .eyebrow{margin-bottom:12px}
 .feed-preview{max-width:none}
