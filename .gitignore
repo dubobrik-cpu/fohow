@@ -1,3 +1,6 @@
 _kandidaty/
 _ramka.html
 *.stackdump
+api/nastroyki.php
+blog-foto/
+blog-data/

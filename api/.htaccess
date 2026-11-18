@@ -1,0 +1,5 @@
+# Снаружи открыты только два адреса: обработчик и страница блога. Настройки, библиотека, смена пароля закрыты
+Options -Indexes
+<FilesMatch "^(?!blog\.php$|blog-stranica\.php$).*$">
+  Require all denied
+</FilesMatch>

@@ -81,11 +81,12 @@
 <script id="stop-data" type="application/json">{"red": ["вылеч", "излеч", "лечит", "лечат", "лечени", "лечеб", "лечу", "лечим", "лечил", "лекарств", "исцел", "болезн", "заболе", "недуг", "диагноз", "онколог", "=рак", "раков", "опухол", "диабет", "астм", "инсульт", "инфаркт", "гипертон", "covid", "ковид", "коронавирус", "эпидеми", "пандеми", "гарантир", "панаце", "чудодейств", "избавит", "избавля", "избавил"], "yellow": ["иммунитет", "=боль", "=боли", "=болит", "=болят", "сустав", "давлени", "вирус", "препарат", "симптом", "омолож", "похуд", "сжига", "токсин", "шлак", "100%"]}</script>
 <script>
 (function(){
-  var PROBA = true; // пробный режим: обработчика публикации пока нет, он появится на хостинге
+  // пробный режим, пока рядом нет обработчика api/blog.php (на GitHub Pages его нет, на хостинге есть)
+  var PROBA = true, API = 'api/blog.php';
   var posts = JSON.parse(document.getElementById('posts-data').textContent || '[]');
   var stop = JSON.parse(document.getElementById('stop-data').textContent || '{}');
   var $ = function(id){ return document.getElementById(id); };
-  var fotoUrl = null;
+  var fotoUrl = null, fotoFile = null, idet = false;
 
   function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
   var MES = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
@@ -148,32 +149,96 @@
     }).join('') || '<li><span>Записей пока нет</span></li>';
   }
 
+  function soobshchit(vid, html){ $('otvet').className = 'otvet ' + vid; $('otvet').innerHTML = html; }
+
+  function zagruzit(){
+    return fetch(API + '?action=spisok', {cache: 'no-store'})
+      .then(function(r){ return r.ok ? r.json() : null; })
+      .then(function(d){
+        if(!d || !d.ok) return;
+        PROBA = false; posts = d.posts || []; stop = d.stop || stop;
+        var c = document.querySelector('.concept'); if(c) c.remove();
+        spisok(); obnovit();
+      }).catch(function(){});
+  }
+
+  // уменьшаем фото в телефоне до 1600 точек: загрузка быстрее, сервер всё равно пересохранит
+  function szhat(f){
+    return new Promise(function(ok){
+      var img = new Image(), url = URL.createObjectURL(f);
+      img.onload = function(){
+        var k = Math.min(1, 1600 / Math.max(img.naturalWidth, img.naturalHeight));
+        var c = document.createElement('canvas');
+        c.width = Math.round(img.naturalWidth * k); c.height = Math.round(img.naturalHeight * k);
+        c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+        URL.revokeObjectURL(url);
+        c.toBlob(function(b){ ok(b || f); }, 'image/jpeg', 0.85);
+      };
+      img.onerror = function(){ URL.revokeObjectURL(url); ok(f); };
+      img.src = url;
+    });
+  }
+
+  function otpravit(fd){
+    return fetch(API, {method: 'POST', body: fd}).then(function(r){
+      return r.json().catch(function(){ return {ok: false, oshibka: 'Сервер ответил непонятно (код ' + r.status + '). Запись не сохранилась'}; });
+    }, function(){ return {ok: false, oshibka: 'Нет связи с сайтом. Проверьте интернет и нажмите ещё раз'}; });
+  }
+
+  function sbrosFoto(){
+    if(fotoUrl) URL.revokeObjectURL(fotoUrl); fotoUrl = null; fotoFile = null; $('foto').value = '';
+    $('foto-name').textContent = 'Выбрать фото'; $('foto-del').hidden = true;
+  }
+
   $('zag').addEventListener('input', obnovit);
   $('tekst').addEventListener('input', obnovit);
   $('foto').addEventListener('change', function(){
     var f = this.files && this.files[0]; if(!f) return;
     if(fotoUrl) URL.revokeObjectURL(fotoUrl);
-    fotoUrl = URL.createObjectURL(f);
+    fotoUrl = URL.createObjectURL(f); fotoFile = f;
     $('foto-name').textContent = f.name; $('foto-del').hidden = false; obnovit();
   });
-  $('foto-del').addEventListener('click', function(){
-    if(fotoUrl) URL.revokeObjectURL(fotoUrl); fotoUrl = null; $('foto').value = '';
-    $('foto-name').textContent = 'Выбрать фото'; this.hidden = true; obnovit();
-  });
+  $('foto-del').addEventListener('click', function(){ sbrosFoto(); obnovit(); });
   $('spisok').addEventListener('click', function(e){
     var b = e.target.closest('button[data-id]'); if(!b) return;
-    $('otvet').className = 'otvet info';
-    $('otvet').textContent = PROBA ? 'Пробный режим: удаление заработает на вашем хостинге' : '';
+    if(PROBA){ soobshchit('info', 'Пробный режим: удаление заработает на вашем хостинге'); return; }
+    if(!$('parol').value){ soobshchit('err', 'Чтобы удалить запись, введите пароль вверху'); $('parol').focus(); return; }
+    var p = posts.filter(function(x){ return x.id === b.dataset.id; })[0];
+    if(!confirm('Удалить запись «' + (p ? (p.title || p.text.slice(0, 40)) : '') + '»? Вернуть её можно будет только через Викторию')) return;
+    var fd = new FormData(); fd.append('action', 'udalit'); fd.append('parol', $('parol').value); fd.append('id', b.dataset.id);
+    b.disabled = true;
+    otpravit(fd).then(function(d){
+      b.disabled = false;
+      if(d.ok){ soobshchit('good', 'Запись удалена'); zagruzit(); }
+      else soobshchit('err', esc(d.oshibka || 'Не получилось удалить'));
+    });
   });
   $('forma').addEventListener('submit', function(e){
     e.preventDefault();
-    if($('opublikovat').disabled) return;
-    if(!$('parol').value){ $('otvet').className = 'otvet err'; $('otvet').textContent = 'Введите пароль'; $('parol').focus(); return; }
-    $('otvet').className = 'otvet info';
-    $('otvet').textContent = PROBA ? 'Пробный режим: запись не сохранилась. Когда сайт переедет на ваш хостинг, после этой кнопки запись появится в блоге через минуту' : '';
+    if($('opublikovat').disabled || idet) return;
+    if(!$('parol').value){ soobshchit('err', 'Введите пароль'); $('parol').focus(); return; }
+    if(PROBA){ soobshchit('info', 'Пробный режим: запись не сохранилась. Когда сайт переедет на ваш хостинг, после этой кнопки запись сразу появится в блоге'); return; }
+    idet = true; $('opublikovat').disabled = true; soobshchit('info', 'Публикую…');
+    (fotoFile ? szhat(fotoFile) : Promise.resolve(null)).then(function(foto){
+      var fd = new FormData();
+      fd.append('action', 'opublikovat'); fd.append('parol', $('parol').value);
+      fd.append('zag', $('zag').value); fd.append('tekst', $('tekst').value);
+      if(foto) fd.append('foto', foto, 'foto.jpg');
+      return otpravit(fd);
+    }).then(function(d){
+      idet = false;
+      if(d.ok){
+        $('zag').value = ''; $('tekst').value = ''; sbrosFoto(); obnovit();
+        soobshchit('good', 'Опубликовано. <a href="' + esc(d.ssylka) + '">Открыть запись в блоге</a>');
+        zagruzit();
+      } else {
+        obnovit();
+        soobshchit('err', esc(d.oshibka || 'Не получилось') + (d.slova ? ': ' + d.slova.map(function(w){ return '<mark class="mr">' + esc(w) + '</mark>'; }).join(' ') : ''));
+      }
+    });
   });
 
-  spisok(); obnovit();
+  spisok(); obnovit(); zagruzit();
 })();
 </script>
 </body>

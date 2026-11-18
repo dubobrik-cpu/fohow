@@ -385,6 +385,8 @@ mark.my{background:#f0dca8;color:#5a4410;border-radius:4px;padding:0 4px}
 .otvet{margin-top:14px;font-size:14.5px;line-height:1.5}
 .otvet.info{color:var(--ink-soft)}
 .otvet.err{color:var(--red);font-weight:600}
+.otvet.good{color:#2f6b3a;font-weight:600}
+.otvet a{color:inherit}
 .pisat-side .eyebrow{margin-bottom:12px}
 .feed-preview{max-width:none}
 .moi{margin-top:34px}
