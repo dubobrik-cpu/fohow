@@ -414,3 +414,5 @@ mark.my{background:#f0dca8;color:#5a4410;border-radius:4px;padding:0 4px}
 section.zona-a{background:var(--paper);border-top:1px solid rgba(154,116,52,.4)}
 section.zona-b{background:#f1e4c8;border-top:1px solid rgba(154,116,52,.4)}
 section.zona-a .dir,section.zona-a .card,section.zona-a .term,section.zona-a .cond,section.zona-a .step{box-shadow:0 10px 26px -20px rgba(86,0,31,.35)}
+.fld small.good{color:var(--green);font-weight:600}
+.fld small.err{color:var(--red);font-weight:600}

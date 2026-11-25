@@ -12,8 +12,6 @@
 </head>
 <body class="pisat">
 
-<div class="concept">Пробный режим: так будет выглядеть страница для ваших записей. Публикация заработает, когда сайт переедет на ваш хостинг</div>
-
 <header class="top">
   <div class="wrap">
     <a class="brand" href="blog.html">
@@ -30,10 +28,12 @@
       <div class="eyebrow">Новая запись</div>
       <h1>Написать в блог</h1>
 
-      <label class="fld">
-        <span>Пароль</span>
-        <input type="password" id="parol" autocomplete="current-password" placeholder="Пароль от блога">
-      </label>
+      <div class="fld">
+        <span id="kluch-zag">Ключ доступа</span>
+        <input type="password" id="kluch" aria-labelledby="kluch-zag" autocomplete="off" spellcheck="false" placeholder="Вставьте ключ из сообщения">
+        <small id="kluch-info">Вставьте ключ один раз, телефон его запомнит</small>
+        <button type="button" class="link-btn" id="kluch-zabyt" hidden>Забыть ключ на этом устройстве</button>
+      </div>
 
       <label class="fld">
         <span>Заголовок <i>необязательно</i></span>
@@ -81,18 +81,31 @@
 <script id="stop-data" type="application/json">{"red": ["вылеч", "излеч", "лечит", "лечат", "лечени", "лечеб", "лечу", "лечим", "лечил", "лекарств", "исцел", "болезн", "заболе", "недуг", "диагноз", "онколог", "=рак", "раков", "опухол", "диабет", "астм", "инсульт", "инфаркт", "гипертон", "covid", "ковид", "коронавирус", "эпидеми", "пандеми", "гарантир", "панаце", "чудодейств", "избавит", "избавля", "избавил"], "yellow": ["иммунитет", "=боль", "=боли", "=болит", "=болят", "сустав", "давлени", "вирус", "препарат", "симптом", "омолож", "похуд", "сжига", "токсин", "шлак", "100%"]}</script>
 <script>
 (function(){
-  // пробный режим, пока рядом нет обработчика api/blog.php (на GitHub Pages его нет, на хостинге есть)
-  var PROBA = true, API = 'api/blog.php';
+  // Публикация без своего сервера: страница сама сохраняет запись в хранилище сайта на GitHub
+  // (blog/posts.json + готовая разметка в blog.html + фото в blog/img/) одним сохранением.
+  // Хостинг забирает сайт из GitHub и обновляется сам через пару минут.
+  // Ключ доступа = личный ключ GitHub только на это хранилище с правом «Contents: Read and write».
+  var q = new URLSearchParams(location.search);
+  var REPO = 'dubobrik-cpu/fohow', VETKA = q.get('vetka') || 'main';
+  var GH = 'https://api.github.com/repos/' + REPO, LS = 'fohow-blog-kluch';
   var posts = JSON.parse(document.getElementById('posts-data').textContent || '[]');
   var stop = JSON.parse(document.getElementById('stop-data').textContent || '{}');
   var $ = function(id){ return document.getElementById(id); };
-  var fotoUrl = null, fotoFile = null, idet = false;
+  var kluch = '', rabota = false, fotoUrl = null, fotoFile = null, idet = false;
 
-  function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+  function esc(s){ return String(s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#x27;'}[c]; }); }
   var MES = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
-  function dataRu(iso){ var d = new Date(iso); return d.getDate() + ' ' + MES[d.getMonth()] + ' ' + d.getFullYear(); }
+  function dataRu(iso){ var m = String(iso).slice(0, 10).split('-'); return (+m[2]) + ' ' + MES[m[1] - 1] + ' ' + m[0]; }
+  function dv(n){ return (n < 10 ? '0' : '') + n; }
+  function isoSeychas(){
+    var d = new Date(), o = -d.getTimezoneOffset();
+    return d.getFullYear() + '-' + dv(d.getMonth() + 1) + '-' + dv(d.getDate()) + 'T' + dv(d.getHours()) + ':' + dv(d.getMinutes()) + ':' + dv(d.getSeconds()) +
+      (o >= 0 ? '+' : '-') + dv(Math.floor(Math.abs(o) / 60)) + ':' + dv(Math.abs(o) % 60);
+  }
+  function lsGet(){ try { return localStorage.getItem(LS) || ''; } catch(e){ return ''; } }
+  function lsSet(v){ try { if(v) localStorage.setItem(LS, v); else localStorage.removeItem(LS); } catch(e){} }
 
-  // тот же разбор текста, что и на странице блога
+  // тот же разбор текста, что в сборщике blog-build.py
   function textHtml(t){
     return t.replace(/\r/g,'').split(/\n\s*\n/).map(function(block){
       var out = '', para = [], list = [];
@@ -110,6 +123,24 @@
       if(list.length) out += '<ul>' + list.join('') + '</ul>';
       return out;
     }).join('');
+  }
+
+  // запись в blog.html, один в один с post_html в blog-build.py
+  function postHtml(p, w, h){
+    var meta = p.date ? dataRu(p.date) : (p.label || '');
+    var s = '      <article class="post rise" id="' + esc(p.id) + '">\n' +
+            '        <div class="post-meta eyebrow">' + esc(meta) + '</div>\n';
+    if(p.title) s += '        <h2>' + esc(p.title) + '</h2>\n';
+    s += '        <div class="post-text">' + textHtml(p.text) + '</div>\n';
+    if(p.img) s += '        <figure class="post-pic"><img src="' + esc(p.img) + '" alt="' + esc(p.alt || p.title || '') + '" loading="lazy"' +
+      (w ? ' width="' + w + '" height="' + h + '"' : '') + '>' + (p.credit ? '<figcaption>' + esc(p.credit) + '</figcaption>' : '') + '</figure>\n';
+    return s + '      </article>';
+  }
+
+  // порядок как на странице блога: записи с датой новые сверху, стартовые без даты в конце
+  function poryadok(ps){
+    var s = ps.filter(function(p){ return p.date; }).sort(function(a, b){ return a.date < b.date ? 1 : a.date > b.date ? -1 : 0; });
+    return s.concat(ps.filter(function(p){ return !p.date; }));
   }
 
   // поиск слов из списка: начало слова, «=» значит целое слово
@@ -136,35 +167,106 @@
     $('pr-yel').innerHTML = '<b>Проверьте:</b> ' + yel.map(function(w){ return '<mark class="my">' + esc(w) + '</mark>'; }).join(' ') + '<br>Опубликовать можно, но убедитесь, что здесь нет обещания результата';
     $('opublikovat').disabled = !t || red.length > 0;
 
-    var html = '<article class="post"><div class="post-meta eyebrow">' + dataRu(new Date()) + '</div>' +
+    $('predprosmotr').innerHTML = '<article class="post"><div class="post-meta eyebrow">' + dataRu(isoSeychas()) + '</div>' +
       (zag ? '<h2>' + esc(zag) + '</h2>' : '') +
       '<div class="post-text">' + (t ? textHtml(t) : '<p class="pusto">Здесь появится ваш текст</p>') + '</div>' +
       (fotoUrl ? '<figure class="post-pic"><img src="' + fotoUrl + '" alt=""></figure>' : '') + '</article>';
-    $('predprosmotr').innerHTML = html;
   }
 
   function spisok(){
-    $('spisok').innerHTML = posts.map(function(p){
+    $('spisok').innerHTML = poryadok(posts).map(function(p){
       return '<li><span>' + esc(p.title || p.text.slice(0, 60)) + '<small>' + (p.date ? dataRu(p.date) : esc(p.label || '')) + '</small></span><button type="button" class="link-btn" data-id="' + esc(p.id) + '">Удалить</button></li>';
     }).join('') || '<li><span>Записей пока нет</span></li>';
   }
 
   function soobshchit(vid, html){ $('otvet').className = 'otvet ' + vid; $('otvet').innerHTML = html; }
+  function kluchInfo(vid, text){ $('kluch-info').className = vid; $('kluch-info').textContent = text; }
 
-  function zagruzit(){
-    return fetch(API + '?action=spisok', {cache: 'no-store'})
-      .then(function(r){ return r.ok ? r.json() : null; })
-      .then(function(d){
-        if(!d || !d.ok) return;
-        PROBA = false; posts = d.posts || []; stop = d.stop || stop;
-        var c = document.querySelector('.concept'); if(c) c.remove();
-        spisok(); obnovit();
-      }).catch(function(){});
+  // ---- GitHub ----
+  function gh(put, metod, telo){
+    return fetch(GH + put, {
+      method: metod || 'GET', cache: 'no-store',
+      headers: {'Authorization': 'Bearer ' + kluch, 'Accept': 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28'},
+      body: telo ? JSON.stringify(telo) : undefined
+    }).then(function(r){
+      return r.json().catch(function(){ return {}; }).then(function(d){
+        if(!r.ok){ var e = new Error(d.message || ('код ' + r.status)); e.status = r.status; throw e; }
+        return d;
+      });
+    }, function(){ var e = new Error('нет связи'); e.status = 0; throw e; });
+  }
+  function b64tekst(s){
+    var bin = atob(String(s).replace(/\s/g, '')), u = new Uint8Array(bin.length);
+    for(var i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i);
+    return new TextDecoder().decode(u);
+  }
+  function fayl(put, ref){ return gh('/contents/' + put + '?ref=' + ref).then(function(d){ return b64tekst(d.content); }); }
+  function blobB64(blob){
+    return new Promise(function(ok, no){ var r = new FileReader(); r.onload = function(){ ok(String(r.result).split(',')[1]); }; r.onerror = no; r.readAsDataURL(blob); });
+  }
+  function ponyatno(e){
+    if(e.status === 401) return 'Ключ не подходит или устарел. Напишите Виктории, она пришлёт новый';
+    if(e.status === 403 || e.status === 404) return 'У этого ключа нет доступа к сайту. Напишите Виктории';
+    if(e.status === 0) return 'Нет связи. Проверьте интернет и нажмите ещё раз';
+    if(e.status === 409 || e.status === 422) return 'Сайт как раз обновлялся. Нажмите ещё раз';
+    return 'Не получилось (' + esc(e.message) + '). Запись не сохранилась, напишите Виктории';
   }
 
-  // уменьшаем фото в телефоне до 1600 точек: загрузка быстрее, сервер всё равно пересохранит
+  // одно сохранение в GitHub: читаем свежие posts.json и blog.html, меняем, сохраняем вместе
+  function sohranit(izmenit, opisanie){
+    return gh('/git/ref/heads/' + VETKA).then(function(ref){
+      var head = ref.object.sha;
+      return gh('/git/commits/' + head).then(function(c){
+        return Promise.all([fayl('blog/posts.json', head), fayl('blog.html', head)]).then(function(f){
+          var res = izmenit(JSON.parse(f[0]), f[1]);
+          var tree = [
+            {path: 'blog/posts.json', mode: '100644', type: 'blob', content: JSON.stringify(res.posts, null, 2) + '\n'},
+            {path: 'blog.html', mode: '100644', type: 'blob', content: res.blog}
+          ].concat(res.dop || []);
+          return gh('/git/trees', 'POST', {base_tree: c.tree.sha, tree: tree})
+            .then(function(t){ return gh('/git/commits', 'POST', {message: opisanie, tree: t.sha, parents: [head]}); })
+            .then(function(nc){ return gh('/git/refs/heads/' + VETKA, 'PATCH', {sha: nc.sha, force: false}); })
+            .then(function(){ return res.posts; });
+        });
+      });
+    });
+  }
+  // если сайт обновился между чтением и сохранением, пробуем ещё раз
+  function sohranitSPovtorom(izmenit, opisanie){
+    return sohranit(izmenit, opisanie).catch(function(e){
+      if(e.status === 409 || e.status === 422) return sohranit(izmenit, opisanie);
+      throw e;
+    });
+  }
+
+  function zagruzitBezKlucha(){
+    fetch('blog/posts.json', {cache: 'no-store'}).then(function(r){ return r.ok ? r.json() : null; })
+      .then(function(d){ if(Array.isArray(d)){ posts = d; spisok(); } }).catch(function(){});
+    fetch('blog/stop-slova.json', {cache: 'no-store'}).then(function(r){ return r.ok ? r.json() : null; })
+      .then(function(d){ if(d && d.red){ stop = d; obnovit(); } }).catch(function(){});
+  }
+
+  function proverit(){
+    kluch = $('kluch').value.trim();
+    rabota = false;
+    if(!kluch){ kluchInfo('', 'Вставьте ключ один раз, телефон его запомнит'); $('kluch-zabyt').hidden = true; return; }
+    kluchInfo('', 'Проверяю ключ…');
+    var k = kluch;
+    Promise.all([fayl('blog/posts.json', VETKA), fayl('blog/stop-slova.json', VETKA)]).then(function(f){
+      if(k !== kluch) return;
+      posts = JSON.parse(f[0]); stop = JSON.parse(f[1]);
+      rabota = true; lsSet(kluch); $('kluch-zabyt').hidden = false;
+      kluchInfo('good', 'Ключ подходит, можно публиковать');
+      spisok(); obnovit();
+    }).catch(function(e){
+      if(k !== kluch) return;
+      kluchInfo('err', ponyatno(e));
+    });
+  }
+
+  // уменьшаем фото в телефоне до 1600 точек по длинной стороне
   function szhat(f){
-    return new Promise(function(ok){
+    return new Promise(function(ok, no){
       var img = new Image(), url = URL.createObjectURL(f);
       img.onload = function(){
         var k = Math.min(1, 1600 / Math.max(img.naturalWidth, img.naturalHeight));
@@ -172,17 +274,15 @@
         c.width = Math.round(img.naturalWidth * k); c.height = Math.round(img.naturalHeight * k);
         c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
         URL.revokeObjectURL(url);
-        c.toBlob(function(b){ ok(b || f); }, 'image/jpeg', 0.85);
+        var gotovo = function(b, ext){ b ? ok({blob: b, w: c.width, h: c.height, ext: ext}) : no(new Error('фото не сохранилось')); };
+        c.toBlob(function(b){
+          if(b && b.type === 'image/webp') gotovo(b, 'webp');
+          else c.toBlob(function(j){ gotovo(j, 'jpg'); }, 'image/jpeg', 0.85);
+        }, 'image/webp', 0.82);
       };
-      img.onerror = function(){ URL.revokeObjectURL(url); ok(f); };
+      img.onerror = function(){ URL.revokeObjectURL(url); no(new Error('Это фото не открылось. Выберите другое, в формате JPG или PNG')); };
       img.src = url;
     });
-  }
-
-  function otpravit(fd){
-    return fetch(API, {method: 'POST', body: fd}).then(function(r){
-      return r.json().catch(function(){ return {ok: false, oshibka: 'Сервер ответил непонятно (код ' + r.status + '). Запись не сохранилась'}; });
-    }, function(){ return {ok: false, oshibka: 'Нет связи с сайтом. Проверьте интернет и нажмите ещё раз'}; });
   }
 
   function sbrosFoto(){
@@ -190,6 +290,11 @@
     $('foto-name').textContent = 'Выбрать фото'; $('foto-del').hidden = true;
   }
 
+  var tajmer = null;
+  $('kluch').addEventListener('input', function(){ clearTimeout(tajmer); tajmer = setTimeout(proverit, 600); });
+  $('kluch-zabyt').addEventListener('click', function(){
+    lsSet(''); $('kluch').value = ''; proverit(); soobshchit('info', 'Ключ удалён с этого устройства');
+  });
   $('zag').addEventListener('input', obnovit);
   $('tekst').addEventListener('input', obnovit);
   $('foto').addEventListener('change', function(){
@@ -199,46 +304,67 @@
     $('foto-name').textContent = f.name; $('foto-del').hidden = false; obnovit();
   });
   $('foto-del').addEventListener('click', function(){ sbrosFoto(); obnovit(); });
+
   $('spisok').addEventListener('click', function(e){
-    var b = e.target.closest('button[data-id]'); if(!b) return;
-    if(PROBA){ soobshchit('info', 'Пробный режим: удаление заработает на вашем хостинге'); return; }
-    if(!$('parol').value){ soobshchit('err', 'Чтобы удалить запись, введите пароль вверху'); $('parol').focus(); return; }
-    var p = posts.filter(function(x){ return x.id === b.dataset.id; })[0];
+    var b = e.target.closest('button[data-id]'); if(!b || idet) return;
+    if(!rabota){ soobshchit('err', 'Чтобы удалить запись, вставьте ключ доступа вверху'); $('kluch').focus(); return; }
+    var id = b.dataset.id, p = posts.filter(function(x){ return x.id === id; })[0];
     if(!confirm('Удалить запись «' + (p ? (p.title || p.text.slice(0, 40)) : '') + '»? Вернуть её можно будет только через Викторию')) return;
-    var fd = new FormData(); fd.append('action', 'udalit'); fd.append('parol', $('parol').value); fd.append('id', b.dataset.id);
-    b.disabled = true;
-    otpravit(fd).then(function(d){
-      b.disabled = false;
-      if(d.ok){ soobshchit('good', 'Запись удалена'); zagruzit(); }
-      else soobshchit('err', esc(d.oshibka || 'Не получилось удалить'));
-    });
-  });
-  $('forma').addEventListener('submit', function(e){
-    e.preventDefault();
-    if($('opublikovat').disabled || idet) return;
-    if(!$('parol').value){ soobshchit('err', 'Введите пароль'); $('parol').focus(); return; }
-    if(PROBA){ soobshchit('info', 'Пробный режим: запись не сохранилась. Когда сайт переедет на ваш хостинг, после этой кнопки запись сразу появится в блоге'); return; }
-    idet = true; $('opublikovat').disabled = true; soobshchit('info', 'Публикую…');
-    (fotoFile ? szhat(fotoFile) : Promise.resolve(null)).then(function(foto){
-      var fd = new FormData();
-      fd.append('action', 'opublikovat'); fd.append('parol', $('parol').value);
-      fd.append('zag', $('zag').value); fd.append('tekst', $('tekst').value);
-      if(foto) fd.append('foto', foto, 'foto.jpg');
-      return otpravit(fd);
-    }).then(function(d){
-      idet = false;
-      if(d.ok){
-        $('zag').value = ''; $('tekst').value = ''; sbrosFoto(); obnovit();
-        soobshchit('good', 'Опубликовано. <a href="' + esc(d.ssylka) + '">Открыть запись в блоге</a>');
-        zagruzit();
-      } else {
-        obnovit();
-        soobshchit('err', esc(d.oshibka || 'Не получилось') + (d.slova ? ': ' + d.slova.map(function(w){ return '<mark class="mr">' + esc(w) + '</mark>'; }).join(' ') : ''));
-      }
+    idet = true; b.disabled = true; soobshchit('info', 'Удаляю…');
+    sohranitSPovtorom(function(ps, blog){
+      var ud = ps.filter(function(x){ return x.id === id; })[0];
+      if(!ud) throw Object.assign(new Error('Этой записи уже нет'), {status: -1});
+      var re = new RegExp('\\n?[ \\t]*<article class="post rise" id="' + esc(id).replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '">[\\s\\S]*?</article>');
+      var dop = [];
+      if(ud.img && /^blog\/img\/[\w.-]+$/.test(ud.img)) dop.push({path: ud.img, mode: '100644', type: 'blob', sha: null});
+      return {posts: ps.filter(function(x){ return x.id !== id; }), blog: blog.replace(re, ''), dop: dop};
+    }, 'Блог: удалена запись ' + id).then(function(ps){
+      idet = false; posts = ps; spisok();
+      soobshchit('good', 'Запись удалена. С сайта она пропадёт через пару минут');
+    }).catch(function(e){
+      idet = false; b.disabled = false;
+      soobshchit('err', e.status === -1 ? 'Этой записи уже нет' : ponyatno(e));
     });
   });
 
-  spisok(); obnovit(); zagruzit();
+  $('forma').addEventListener('submit', function(e){
+    e.preventDefault();
+    if($('opublikovat').disabled || idet) return;
+    if(!rabota){ soobshchit('err', $('kluch').value.trim() ? 'Ключ не подошёл, смотрите подсказку под ним' : 'Вставьте ключ доступа вверху страницы'); $('kluch').focus(); return; }
+    var zag = $('zag').value.trim(), t = $('tekst').value.trim();
+    var red = nayti(zag + '\n' + t, stop.red);
+    if(red.length){ obnovit(); return; }
+    idet = true; $('opublikovat').disabled = true; soobshchit('info', 'Публикую…');
+    var data = isoSeychas();
+    var id = data.slice(0, 10) + '-' + data.slice(11, 19).replace(/:/g, '') + '-' + Math.random().toString(16).slice(2, 6);
+    (fotoFile ? szhat(fotoFile) : Promise.resolve(null)).then(function(foto){
+      if(!foto) return null;
+      return blobB64(foto.blob).then(function(b64){ return gh('/git/blobs', 'POST', {content: b64, encoding: 'base64'}); })
+        .then(function(bl){ foto.sha = bl.sha; return foto; });
+    }).then(function(foto){
+      var zapis = {id: id, date: data, label: null, title: zag || null, text: t,
+                   img: foto ? 'blog/img/' + id + '.' + foto.ext : null, alt: null, credit: null};
+      return sohranitSPovtorom(function(ps, blog){
+        if(blog.indexOf('<!--POSTS-->\n') < 0) throw new Error('на странице блога нет места для записей');
+        return {
+          posts: [zapis].concat(ps.filter(function(x){ return x.id !== id; })),
+          blog: blog.replace('<!--POSTS-->\n', function(){ return '<!--POSTS-->\n' + postHtml(zapis, foto && foto.w, foto && foto.h) + '\n'; }),
+          dop: foto ? [{path: zapis.img, mode: '100644', type: 'blob', sha: foto.sha}] : []
+        };
+      }, 'Блог: новая запись ' + id);
+    }).then(function(ps){
+      idet = false; posts = ps;
+      $('zag').value = ''; $('tekst').value = ''; sbrosFoto(); obnovit(); spisok();
+      soobshchit('good', 'Опубликовано. Запись появится в блоге через пару минут. <a href="blog.html#' + esc(id) + '">Открыть блог</a>');
+    }).catch(function(e){
+      idet = false; obnovit();
+      soobshchit('err', e.status === undefined ? esc(e.message) : ponyatno(e));
+    });
+  });
+
+  spisok(); obnovit();
+  var sohranen = lsGet();
+  if(sohranen){ $('kluch').value = sohranen; proverit(); } else zagruzitBezKlucha();
 })();
 </script>
 </body>
