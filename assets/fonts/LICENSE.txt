@@ -1,0 +1,3 @@
+Шрифты Manrope (Mikhail Sharanda) и Cormorant Garamond (Christian Thalmann, Catharsis Fonts)
+распространяются по лицензии SIL Open Font License 1.1: https://openfontlicense.org
+Файлы взяты с Google Fonts (fonts.google.com), наборы знаков: кириллица и латиница.

@@ -1,0 +1,4 @@
+User-agent: *
+Disallow: /napisat.html
+
+Sitemap: https://fohowfenix.ru/sitemap.xml
