@@ -409,3 +409,8 @@ mark.my{background:#f0dca8;color:#5a4410;border-radius:4px;padding:0 4px}
 .contact-btns{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin-top:30px}
 .contact-yt{text-align:center;margin-top:16px;font-size:15px;color:var(--ink-soft)}
 .contact-yt a{color:var(--red);font-weight:700}
+
+/* явные зоны между блоками (просьба Юлии 25.11) */
+section.zona-a{background:var(--paper);border-top:1px solid rgba(154,116,52,.4)}
+section.zona-b{background:#f1e4c8;border-top:1px solid rgba(154,116,52,.4)}
+section.zona-a .dir,section.zona-a .card,section.zona-a .term,section.zona-a .cond,section.zona-a .step{box-shadow:0 10px 26px -20px rgba(86,0,31,.35)}
